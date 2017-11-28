@@ -1,0 +1,31 @@
+*** Settings ***
+Variables         IP360_account_testdata.py
+Resource          ../UserKeywords/AllUserKeywords.txt
+
+*** Test Cases ***
+01_IP360Login_OK
+    log    步骤1：登录检查
+    @{userinfo}    ip360webapi Login    &{testdata_001_ip360_account_001}
+    Run Keyword if    @{userinfo}[2]!=1    Fail
+
+02_IP360Login_Password_Error
+    log    步骤1：登录密码错误检查
+    ${userinfo}    ip360webapi Login    &{testdata_001_ip360_account_002}
+    Run Keyword if    ${userinfo}!=1    Fail
+
+03_IP360Login_vcode_Error
+    log    步骤1：登录验证码错误检查
+    ${userinfo}    ip360webapi Login    &{testdata_001_ip360_account_003}
+    Run Keyword if    ${userinfo}!=1    Fail
+
+04_IP360Login_password_Error_3times
+    log    步骤1：登录密码错误检查1次
+    ${userinfo}    ip360webapi Login    &{testdata_001_ip360_account_002}
+    Run Keyword if    ${userinfo}!=1    Fail
+    log    步骤2：登录密码错误检查2次
+    ${userinfo}    ip360webapi Login    &{testdata_001_ip360_account_002}
+    Run Keyword if    ${userinfo}!=1    Fail
+    log    步骤3：登录密码错误检查3次
+    ${userinfo}    ip360webapi Login    &{testdata_001_ip360_account_002}
+    Run Keyword if    ${userinfo}!=1    Fail
+    sleep     310s

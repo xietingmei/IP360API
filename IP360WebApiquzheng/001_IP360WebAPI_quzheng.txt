@@ -1,0 +1,27 @@
+*** Settings ***
+Variables         ../IP360WebApiaccount/IP360_account_testdata.py
+Variables         IP360_quzheng_testdata.py
+Resource          ../UserKeywords/AllUserKeywords.txt
+
+*** Test Cases ***
+01_IP360Snapshotquzheng
+    log    步骤1：登录获取token
+    @{userinfo}    ip360webapi Login    &{testdata_001_ip360_account_001}
+    log    步骤2：新建快照取证
+    ${flag_ret}    Ip360webapi Snapshotquzheng    @{userinfo}[0]    @{userinfo}[1]    &{testdata_001_ip360_snapshotquzheng_001}
+    Run Keyword if    ${flag_ret}!=1    Fail
+    log    步骤3：检查snapshot数据库save_status是否为2
+    sleep    180s
+    ${status}    Mysql Search Table    &{IP360_SERVER_DB}[DB_NAME]    select save_status from snapshot where user_id="988" and evidence_type=2 \ order by id desc limit 1;
+    Run Keyword if    ${status}!=2    Fail
+
+02_IP360Recordquzheng
+    log    步骤1：登录获取token
+    @{userinfo}    ip360webapi Login    &{testdata_001_ip360_account_001}
+    log    步骤2：新建录屏取证
+    ${flag_ret}    Ip360webapi Recordquzheng    @{userinfo}[0]    @{userinfo}[1]    &{testdata_001_ip360_recordquzheng_001}
+    Run Keyword if    ${flag_ret}!=1    Fail
+    log    步骤3：检查snapshot数据库save_status是否为2
+    sleep    420s
+    ${status}    Mysql Search Table    &{IP360_SERVER_DB}[DB_NAME]    select save_status from snapshot where user_id="988" and evidence_type=1 \ and evidence_mode=1 order by id desc limit 1;
+    Run Keyword if    ${status}!=2    Fail
